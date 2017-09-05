@@ -29023,6 +29023,31 @@ module.exports = require('./lib/React');
 },{"./lib/React":30}],158:[function(require,module,exports){
 "use strict";
 
+var React = require("react");
+
+var Header = React.createClass({displayName: "Header",
+    render: function() {
+        return (
+            React.createElement("nav", {className: "navbar navbar-default"}, 
+                React.createElement("div", {className: "container-fluid"}, 
+                    React.createElement("a", {href: "/", className: "navbar-brand"}, 
+                        React.createElement("img", {src: "/images/brand.jpg"})
+                    ), 
+                    React.createElement("ul", {className: "nav navbar-nav"}, 
+                         React.createElement("li", null, React.createElement("a", {href: "/"}, "Home")), 
+                        React.createElement("li", null, React.createElement("a", {href: "/#contact"}, "Kontakt"))
+                    )
+                )
+            )
+        );
+    }
+});
+
+module.exports = Header;
+
+},{"react":157}],159:[function(require,module,exports){
+"use strict";
+
 var React = require('react');
 
 var Contact = React.createClass({displayName: "Contact",
@@ -29039,7 +29064,7 @@ var Contact = React.createClass({displayName: "Contact",
 
 module.exports = Contact;
 
-},{"react":157}],159:[function(require,module,exports){
+},{"react":157}],160:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -29059,11 +29084,12 @@ var Home = React.createClass({displayName: "Home",
 
 module.exports = Home;
 
-},{"react":157}],160:[function(require,module,exports){
+},{"react":157}],161:[function(require,module,exports){
 $ = jQuery = require('jquery');
 var React = require('react');
 var HomePage = require('./components/homePage');
 var ContactPage = require('./components/contact/contactPage');
+var Header = require('./components/common/header');
 
 (function(win) {
     "use strict";
@@ -29081,6 +29107,7 @@ var ContactPage = require('./components/contact/contactPage');
 
             return (
                 React.createElement("div", null, 
+                    React.createElement(Header, null), 
                     React.createElement(Child, null)
                 )
             );
@@ -29096,4 +29123,4 @@ var ContactPage = require('./components/contact/contactPage');
     render();
 })(window);
 
-},{"./components/contact/contactPage":158,"./components/homePage":159,"jquery":2,"react":157}]},{},[160]);
+},{"./components/common/header":158,"./components/contact/contactPage":159,"./components/homePage":160,"jquery":2,"react":157}]},{},[161]);
