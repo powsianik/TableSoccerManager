@@ -46244,17 +46244,10 @@ module.exports = Home;
 "use strict";
 
 var React = require('react');
-var PlayerApi = require('../../api/playerApi');
 
-var Players = React.createClass({displayName: "Players",
-    getInitialState: function () {
-        return {
-            players: []
-        };
-    },
-
-    componentWillMount: function () {
-        this.setState({players: PlayerApi.getAllPlayers()});
+var PlayersList = React.createClass({displayName: "PlayersList",
+    propTypes: {
+        players: React.PropTypes.array.isRequired
     },
 
     render: function () {
@@ -46266,19 +46259,17 @@ var Players = React.createClass({displayName: "Players",
                     React.createElement("td", null, player.lastName)
                 ));
         };
-        
+
         return (
             React.createElement("div", null, 
-                React.createElement("h1", null, "Gracze:"), 
-
                 React.createElement("table", {className: "table"}, 
                     React.createElement("thead", null, 
-                        React.createElement("th", null, "Id"), 
-                        React.createElement("th", null, "Imię"), 
-                        React.createElement("th", null, "Nazwisko")
+                    React.createElement("th", null, "Id"), 
+                    React.createElement("th", null, "Imię"), 
+                    React.createElement("th", null, "Nazwisko")
                     ), 
                     React.createElement("tbody", null, 
-                        this.state.players.map(createPlayerRow, this)
+                        this.props.players.map(createPlayerRow, this)
                     )
                 )
             )
@@ -46286,8 +46277,40 @@ var Players = React.createClass({displayName: "Players",
     }
 });
 
-module.exports = Players;
-},{"../../api/playerApi":159,"react":158}],165:[function(require,module,exports){
+module.exports = PlayersList;
+
+},{"react":158}],165:[function(require,module,exports){
+"use strict";
+
+var React = require('react');
+var PlayerApi = require('../../api/playerApi');
+var PlayersList = require('../players/playersList');
+
+var PlayersPage = React.createClass({displayName: "PlayersPage",
+    getInitialState: function () {
+        return {
+            players: []
+        };
+    },
+
+    componentDidMount: function () {
+        if(this.isMounted()) {
+            this.setState({players: PlayerApi.getAllPlayers()});
+        }
+    },
+
+    render: function () {
+        return (
+            React.createElement("div", null, 
+                React.createElement("h1", null, "Gracze:"), 
+                React.createElement(PlayersList, {players: this.state.players})
+            )
+        );
+    }
+});
+
+module.exports = PlayersPage;
+},{"../../api/playerApi":159,"../players/playersList":164,"react":158}],166:[function(require,module,exports){
 $ = jQuery = require('jquery');
 var React = require('react');
 var HomePage = require('./components/homePage');
@@ -46330,4 +46353,4 @@ var Header = require('./components/common/header');
     render();
 })(window);
 
-},{"./components/common/header":161,"./components/contact/contactPage":162,"./components/homePage":163,"./components/players/playersPage":164,"jquery":2,"react":158}]},{},[165]);
+},{"./components/common/header":161,"./components/contact/contactPage":162,"./components/homePage":163,"./components/players/playersPage":165,"jquery":2,"react":158}]},{},[166]);
