@@ -1,6 +1,8 @@
 "use strict";
 
 var React = require("react");
+var Router = require("react-router");
+var Link = Router.Link;
 
 var Header = React.createClass({
     render: function() {
@@ -11,9 +13,9 @@ var Header = React.createClass({
                         <img src="/images/brand.jpg"/>
                     </a>
                     <ul className="nav navbar-nav">
-                        <li><a href="/">Home</a></li>
-                        <li><a href="/#players">Gracze</a></li>
-                        <li><a href="/#contact">Kontakt</a></li>
+                        <li><Link to="app">Home</Link></li>
+                        <li><Link to="players">Gracze</Link></li>
+                        <li><Link to="contact">Kontakt</Link></li>
                     </ul>
                 </div>
             </nav>

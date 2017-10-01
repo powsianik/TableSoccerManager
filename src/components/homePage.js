@@ -1,6 +1,8 @@
 "use strict";
 
 var React = require('react');
+var Router = require('react-router');
+var Link = Router.Link;
 
 var Home = React.createClass({
    render: function() {
@@ -10,6 +12,7 @@ var Home = React.createClass({
                <p>
                    "Ze wszystkich nieważnych rzeczy futbol jest zdecydowanie najważniejszą"
                </p>
+               <Link to="contact" className="btn btn-primary btn-lg">Dowiedz się więcej</Link>
            </div>
        );
    }
