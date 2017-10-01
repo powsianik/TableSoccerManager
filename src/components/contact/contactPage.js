@@ -3,6 +3,22 @@
 var React = require('react');
 
 var Contact = React.createClass({
+    statics: {
+        willTransitionTo: function (transition, params, query, callback) {
+            if(!confirm('Na pewno chcesz zawracać głowę autorowi tej aplikacji?')){
+                transition.contact();
+            }else{
+                callback();
+            }
+        },
+
+        willTransitionFrom: function (transition, component) {
+            if(!confirm('Na pewno chcesz opóścić tę stronę??')){
+                transition.contact();
+            }
+        }
+    },
+
    render: function() {
        return (
             <div>
