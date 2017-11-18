@@ -1,6 +1,8 @@
 "use strict";
 
 var React = require('react');
+var Router = require('react-router');
+var Link = Router.Link;
 
 var PlayersList = React.createClass({
     propTypes: {
@@ -11,7 +13,7 @@ var PlayersList = React.createClass({
         var createPlayerRow = function (player) {
             return (
                 <tr key={player.id}>
-                    <td><a href={"/#players/" + player.id}>{player.id}</a></td>
+                    <td><Link to="managePlayer" params={{id: player.id}}>{player.id}</Link></td>
                     <td>{player.firstName}</td>
                     <td>{player.lastName}</td>
                 </tr>);

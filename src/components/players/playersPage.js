@@ -1,26 +1,24 @@
 "use strict";
 
 var React = require('react');
-var PlayerApi = require('../../api/playerApi');
+var Router = require('react-router');
+var Link = Router.Link;
+
+var PlayerStore = require('../../stores/playerStore');
 var PlayersList = require('../players/playersList');
 
 var PlayersPage = React.createClass({
     getInitialState: function () {
         return {
-            players: []
+            players: PlayerStore.getAllPlayers()
         };
-    },
-
-    componentDidMount: function () {
-        if(this.isMounted()) {
-            this.setState({players: PlayerApi.getAllPlayers()});
-        }
     },
 
     render: function () {
         return (
             <div>
                 <h1>Gracze:</h1>
+                <Link to="addPlayer" className="btn btn-default btn-sm">Dodaj nowego gracza</Link>
                 <PlayersList players={this.state.players} />
             </div>
         );
