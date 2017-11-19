@@ -14,6 +14,18 @@ var PlayersPage = React.createClass({
         };
     },
 
+    componentWillMount: function(){
+        PlayerStore.addChangeListener(this._onChange);
+    },
+
+    componentWillUnmount: function(){
+        PlayerStore.removeChangeListener(this._onChange);
+    },
+
+    _onChange: function () {
+        this.setState({players: PlayerStore.getAllPlayers()});
+    },
+
     render: function () {
         return (
             <div>

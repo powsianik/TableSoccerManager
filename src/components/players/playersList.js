@@ -2,11 +2,19 @@
 
 var React = require('react');
 var Router = require('react-router');
+var PlayerActions = require('../../actions/playerActions');
+var Toastr = require('toastr');
 var Link = Router.Link;
 
 var PlayersList = React.createClass({
     propTypes: {
         players: React.PropTypes.array.isRequired
+    },
+
+    deletePlayer: function (playerId, event) {
+        event.preventDefault();
+        PlayerActions.deletePlayer(playerId);
+        Toastr.success('Player Deleted');
     },
 
     render: function () {
@@ -16,7 +24,9 @@ var PlayersList = React.createClass({
                     <td><Link to="managePlayer" params={{id: player.id}}>{player.id}</Link></td>
                     <td>{player.firstName}</td>
                     <td>{player.lastName}</td>
-                </tr>);
+                    <td><a href="#" onClick={this.deletePlayer.bind(this, player.id)}>Usuń</a></td>
+                </tr>
+                );
         };
 
         return (

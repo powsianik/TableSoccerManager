@@ -50222,6 +50222,26 @@ var Dispatcher = require("../dispatcher/appDispatcher");
 var PlayerApi = require("../api/playerApi");
 var ActionTypes = require('../constants/actionTypes');
 
+var InitActions = {
+    initApp: function () {
+        Dispatcher.dispatch({
+            actionType: ActionTypes.INITIALIZE,
+            initData: {
+                players: PlayerApi.getAllPlayers()
+            }
+        });
+    }
+};
+
+module.exports = InitActions;
+
+},{"../api/playerApi":206,"../constants/actionTypes":218,"../dispatcher/appDispatcher":219}],205:[function(require,module,exports){
+"use strict";
+
+var Dispatcher = require("../dispatcher/appDispatcher");
+var PlayerApi = require("../api/playerApi");
+var ActionTypes = require('../constants/actionTypes');
+
 var PlayerActions = {
     createPlayer: function(player){
             var newPlayer = PlayerApi.savePlayer(player);
@@ -50230,12 +50250,30 @@ var PlayerActions = {
                 action: ActionTypes.CREATE_PLAYER,
                 player: newPlayer
             });
-        }
+        },
+
+    updatePlayer: function(player){
+        var updatedPlayer = PlayerApi.savePlayer(player);
+
+        Dispatcher.dispatch({
+            action: ActionTypes.UPDATE_PLAYER,
+            player: updatedPlayer
+        });
+    },
+
+    deletePlayer: function(playerId){
+        PlayerApi.removePlayer(playerId);
+
+        Dispatcher.dispatch({
+            action: ActionTypes.DELETE_PLAYER,
+            playerId: playerId
+        });
+    }
 };
 
 module.exports = PlayerActions;
 
-},{"../api/playerApi":205,"../constants/actionTypes":217,"../dispatcher/appDispatcher":218}],205:[function(require,module,exports){
+},{"../api/playerApi":206,"../constants/actionTypes":218,"../dispatcher/appDispatcher":219}],206:[function(require,module,exports){
 "use strict";
 // It's mock of api while I don't set database up.
 
@@ -50280,7 +50318,7 @@ var PlayerApi = {
 
 module.exports = PlayerApi;
 
-},{"./playerData":206,"lodash":7}],206:[function(require,module,exports){
+},{"./playerData":207,"lodash":7}],207:[function(require,module,exports){
 module.exports = {
     players:
     [
@@ -50302,7 +50340,7 @@ module.exports = {
     ]
 };
 
-},{}],207:[function(require,module,exports){
+},{}],208:[function(require,module,exports){
 /*eslint-disable strict */
 
 var React = require('react');
@@ -50325,7 +50363,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App;
 
-},{"./common/header":208,"jquery":6,"react":202,"react-router":33}],208:[function(require,module,exports){
+},{"./common/header":209,"jquery":6,"react":202,"react-router":33}],209:[function(require,module,exports){
 "use strict";
 
 var React = require("react");
@@ -50353,7 +50391,7 @@ var Header = React.createClass({displayName: "Header",
 
 module.exports = Header;
 
-},{"react":202,"react-router":33}],209:[function(require,module,exports){
+},{"react":202,"react-router":33}],210:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -50394,7 +50432,7 @@ var TextInput = React.createClass({displayName: "TextInput",
 
 module.exports = TextInput;
 
-},{"react":202}],210:[function(require,module,exports){
+},{"react":202}],211:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -50429,7 +50467,7 @@ var Contact = React.createClass({displayName: "Contact",
 
 module.exports = Contact;
 
-},{"react":202}],211:[function(require,module,exports){
+},{"react":202}],212:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -50452,7 +50490,7 @@ var Home = React.createClass({displayName: "Home",
 
 module.exports = Home;
 
-},{"react":202,"react-router":33}],212:[function(require,module,exports){
+},{"react":202,"react-router":33}],213:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -50472,7 +50510,7 @@ var NotFoundPage = React.createClass({displayName: "NotFoundPage",
 
 module.exports = NotFoundPage;
 
-},{"react":202,"react-router":33}],213:[function(require,module,exports){
+},{"react":202,"react-router":33}],214:[function(require,module,exports){
 "use strict";
 
 var React = require("react");
@@ -50481,7 +50519,6 @@ var Toastr = require('toastr');
 var PlayerForm = require('./playerForm');
 var PlayerStore = require('../../stores/playerStore');
 var PlayerActions = require('../../actions/playerActions');
-var PlayerApi = require('../../api/playerApi');
 
 
 Toastr.options = {
@@ -50498,8 +50535,10 @@ var ManagePlayersPage = React.createClass({displayName: "ManagePlayersPage",
 
     statics: {
         willTransitionFrom: function(transition, component){
-            if(component.state.dirty && !confirm('Leave without saving?')){
-                transition.abort();
+            if(component.state.dirty){
+                if(!confirm('Leave without saving?')){
+                    transition.abort();
+                }
             }
         }
     },
@@ -50516,7 +50555,7 @@ var ManagePlayersPage = React.createClass({displayName: "ManagePlayersPage",
         var playerId = this.props.params.id;    //from the url path.
 
         if(playerId){
-            this.setState({player: PlayerApi.getPlayerById(playerId)});
+            this.setState({player: PlayerStore.getPlayerById(playerId)});
         }
     },
 
@@ -50555,14 +50594,14 @@ var ManagePlayersPage = React.createClass({displayName: "ManagePlayersPage",
         }
 
         if(this.state.player.id) {
-            return;
+            PlayerActions.updatePlayer(this.state.player);
         }else{
             PlayerActions.createPlayer(this.state.player);
         }
 
         this.setState({dirty: false});
-        Toastr.success('Player saved');
         this.transitionTo('players');
+        Toastr.success('Player saved');
     },
 
     render: function(){
@@ -50577,7 +50616,7 @@ var ManagePlayersPage = React.createClass({displayName: "ManagePlayersPage",
 });
 
 module.exports = ManagePlayersPage;
-},{"../../actions/playerActions":204,"../../api/playerApi":205,"../../stores/playerStore":221,"./playerForm":214,"react":202,"react-router":33,"toastr":203}],214:[function(require,module,exports){
+},{"../../actions/playerActions":205,"../../stores/playerStore":222,"./playerForm":215,"react":202,"react-router":33,"toastr":203}],215:[function(require,module,exports){
 "use strict";
 
 var React = require("react");
@@ -50616,16 +50655,24 @@ var PlayerForm = React.createClass({displayName: "PlayerForm",
 
 module.exports = PlayerForm;
 
-},{"../common/textInput":209,"react":202}],215:[function(require,module,exports){
+},{"../common/textInput":210,"react":202}],216:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
 var Router = require('react-router');
+var PlayerActions = require('../../actions/playerActions');
+var Toastr = require('toastr');
 var Link = Router.Link;
 
 var PlayersList = React.createClass({displayName: "PlayersList",
     propTypes: {
         players: React.PropTypes.array.isRequired
+    },
+
+    deletePlayer: function (playerId, event) {
+        event.preventDefault();
+        PlayerActions.deletePlayer(playerId);
+        Toastr.success('Player Deleted');
     },
 
     render: function () {
@@ -50634,8 +50681,10 @@ var PlayersList = React.createClass({displayName: "PlayersList",
                 React.createElement("tr", {key: player.id}, 
                     React.createElement("td", null, React.createElement(Link, {to: "managePlayer", params: {id: player.id}}, player.id)), 
                     React.createElement("td", null, player.firstName), 
-                    React.createElement("td", null, player.lastName)
-                ));
+                    React.createElement("td", null, player.lastName), 
+                    React.createElement("td", null, React.createElement("a", {href: "#", onClick: this.deletePlayer.bind(this, player.id)}, "Usuń"))
+                )
+                );
         };
 
         return (
@@ -50657,7 +50706,7 @@ var PlayersList = React.createClass({displayName: "PlayersList",
 
 module.exports = PlayersList;
 
-},{"react":202,"react-router":33}],216:[function(require,module,exports){
+},{"../../actions/playerActions":205,"react":202,"react-router":33,"toastr":203}],217:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -50674,6 +50723,18 @@ var PlayersPage = React.createClass({displayName: "PlayersPage",
         };
     },
 
+    componentWillMount: function(){
+        PlayerStore.addChangeListener(this._onChange);
+    },
+
+    componentWillUnmount: function(){
+        PlayerStore.removeChangeListener(this._onChange);
+    },
+
+    _onChange: function () {
+        this.setState({players: PlayerStore.getAllPlayers()});
+    },
+
     render: function () {
         return (
             React.createElement("div", null, 
@@ -50686,31 +50747,37 @@ var PlayersPage = React.createClass({displayName: "PlayersPage",
 });
 
 module.exports = PlayersPage;
-},{"../../stores/playerStore":221,"../players/playersList":215,"react":202,"react-router":33}],217:[function(require,module,exports){
+},{"../../stores/playerStore":222,"../players/playersList":216,"react":202,"react-router":33}],218:[function(require,module,exports){
 "use strict";
 
 var keyMirror = require('react/lib/keyMirror');
 
 module.exports = keyMirror({
-    CREATE_PLAYER: null
+    INITIALIZE: null,
+    CREATE_PLAYER: null,
+    UPDATE_PLAYER: null,
+    DELETE_PLAYER: null
 });
-},{"react/lib/keyMirror":187}],218:[function(require,module,exports){
+},{"react/lib/keyMirror":187}],219:[function(require,module,exports){
 var Dispatcher = require('flux').Dispatcher;
 
 module.exports = new Dispatcher();
 
-},{"flux":3}],219:[function(require,module,exports){
+},{"flux":3}],220:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
 var Router = require('react-router');
 var routes = require('./routes');
+var InitActions = require('./actions/initActions');
+
+InitActions.initApp();
 
 Router.run(routes, Router.HistoryLocation, function(Handler){
    React.render(React.createElement(Handler, null), document.getElementById('app'));
 });
 
-},{"./routes":220,"react":202,"react-router":33}],220:[function(require,module,exports){
+},{"./actions/initActions":204,"./routes":221,"react":202,"react-router":33}],221:[function(require,module,exports){
 "use strict";
 
 var React = require("react");
@@ -50735,7 +50802,7 @@ var routes = (
 
 module.exports = routes;
 
-},{"./components/app":207,"./components/contact/contactPage":210,"./components/homePage":211,"./components/notFoundPage":212,"./components/players/managePlayersPage":213,"./components/players/playersPage":216,"react":202,"react-router":33}],221:[function(require,module,exports){
+},{"./components/app":208,"./components/contact/contactPage":211,"./components/homePage":212,"./components/notFoundPage":213,"./components/players/managePlayersPage":214,"./components/players/playersPage":217,"react":202,"react-router":33}],222:[function(require,module,exports){
 "use strict";
 
 var Dispatcher = require('../dispatcher/appDispatcher');
@@ -50776,6 +50843,22 @@ Dispatcher.register(function (action) {
             _players.push(action.player);
             PlayerStore.emitChange();
             break;
+        case ActionTypes.UPDATE_PLAYER:
+            var existingPlayer = _.find(_players, {id: action.player.id});
+            var playerIndex = _.indexOf(_players, existingPlayer);
+            _players.splice(playerIndex, 1, action.player);
+            PlayerStore.emitChange();
+            break;
+        case ActionTypes.DELETE_PLAYER:
+            _.remove(_players, function(player){
+                return action.playerId === player.id;
+            });
+            PlayerStore.emitChange();
+            break;
+        case ActionTypes.INITIALIZE:
+            _players = action.initData.players;
+            PlayerStore.emitChange();
+            break;
         default:
             break;
     }
@@ -50783,4 +50866,4 @@ Dispatcher.register(function (action) {
 
 module.exports = PlayerStore;
 
-},{"../constants/actionTypes":217,"../dispatcher/appDispatcher":218,"events":1,"lodash":7,"object-assign":8}]},{},[219]);
+},{"../constants/actionTypes":218,"../dispatcher/appDispatcher":219,"events":1,"lodash":7,"object-assign":8}]},{},[220]);

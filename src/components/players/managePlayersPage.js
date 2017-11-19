@@ -6,7 +6,6 @@ var Toastr = require('toastr');
 var PlayerForm = require('./playerForm');
 var PlayerStore = require('../../stores/playerStore');
 var PlayerActions = require('../../actions/playerActions');
-var PlayerApi = require('../../api/playerApi');
 
 
 Toastr.options = {
@@ -23,8 +22,10 @@ var ManagePlayersPage = React.createClass({
 
     statics: {
         willTransitionFrom: function(transition, component){
-            if(component.state.dirty && !confirm('Leave without saving?')){
-                transition.abort();
+            if(component.state.dirty){
+                if(!confirm('Leave without saving?')){
+                    transition.abort();
+                }
             }
         }
     },
@@ -41,7 +42,7 @@ var ManagePlayersPage = React.createClass({
         var playerId = this.props.params.id;    //from the url path.
 
         if(playerId){
-            this.setState({player: PlayerApi.getPlayerById(playerId)});
+            this.setState({player: PlayerStore.getPlayerById(playerId)});
         }
     },
 
@@ -80,14 +81,14 @@ var ManagePlayersPage = React.createClass({
         }
 
         if(this.state.player.id) {
-            return;
+            PlayerActions.updatePlayer(this.state.player);
         }else{
             PlayerActions.createPlayer(this.state.player);
         }
 
         this.setState({dirty: false});
-        Toastr.success('Player saved');
         this.transitionTo('players');
+        Toastr.success('Player saved');
     },
 
     render: function(){

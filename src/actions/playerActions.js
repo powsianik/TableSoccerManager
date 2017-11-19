@@ -12,7 +12,25 @@ var PlayerActions = {
                 action: ActionTypes.CREATE_PLAYER,
                 player: newPlayer
             });
-        }
+        },
+
+    updatePlayer: function(player){
+        var updatedPlayer = PlayerApi.savePlayer(player);
+
+        Dispatcher.dispatch({
+            action: ActionTypes.UPDATE_PLAYER,
+            player: updatedPlayer
+        });
+    },
+
+    deletePlayer: function(playerId){
+        PlayerApi.removePlayer(playerId);
+
+        Dispatcher.dispatch({
+            action: ActionTypes.DELETE_PLAYER,
+            playerId: playerId
+        });
+    }
 };
 
 module.exports = PlayerActions;

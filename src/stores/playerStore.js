@@ -38,6 +38,22 @@ Dispatcher.register(function (action) {
             _players.push(action.player);
             PlayerStore.emitChange();
             break;
+        case ActionTypes.UPDATE_PLAYER:
+            var existingPlayer = _.find(_players, {id: action.player.id});
+            var playerIndex = _.indexOf(_players, existingPlayer);
+            _players.splice(playerIndex, 1, action.player);
+            PlayerStore.emitChange();
+            break;
+        case ActionTypes.DELETE_PLAYER:
+            _.remove(_players, function(player){
+                return action.playerId === player.id;
+            });
+            PlayerStore.emitChange();
+            break;
+        case ActionTypes.INITIALIZE:
+            _players = action.initData.players;
+            PlayerStore.emitChange();
+            break;
         default:
             break;
     }
